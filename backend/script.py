@@ -1,18 +1,37 @@
-from fastapi import FastAPI
-from routers import books
-from data.database import create_tables
 from contextlib import asynccontextmanager
-import models.models
+from fastapi.middleware.cors import CORSMiddleware
+
+from data.database import create_tables
+from fastapi import FastAPI
+from routers.auth import admin_router, user_router
+from routers.books import router as books_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()  # Создаём таблицы при старте приложения
-    yield  # Здесь будет выполняться обработка запросов
+    create_tables()
+    yield
 
-app = FastAPI(title="Онлайн-библиотека Идея", lifespan=lifespan)
-app.include_router(books.router)
 
+app = FastAPI(
+    title="Онлайн-библиотека Идея", 
+    lifespan=lifespan,
+    redirect_slashes=False,  # отключаем автоматическое добавление слэша в конце URL              
+)
+
+# CORS — разрешаем фронтенду на порту 5000 обращаться к бэку на порту 8000.
+# Без этого браузер блокирует запросы между разными портами.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5000", "http://127.0.0.1:5000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(books_router)
+app.include_router(user_router)
+app.include_router(admin_router)
 
 
 if __name__ == "__main__":

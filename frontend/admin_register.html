@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация администратора — Идея</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--warm-bg);
+            padding: 2rem;
+        }
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 24px rgba(61,43,31,0.10);
+        }
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .auth-logo a {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--brown-dark);
+            text-decoration: none;
+        }
+        .auth-title {
+            text-align: center;
+            font-family: var(--font-display);
+            font-size: 18px;
+            color: var(--brown-mid);
+            margin-bottom: 1.75rem;
+            font-style: italic;
+        }
+        .form-section {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin: 1.25rem 0 0.75rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: var(--brown-mid);
+            margin-bottom: 5px;
+        }
+        .form-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: var(--font-body);
+            color: var(--brown-dark);
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--accent); }
+        .form-input--key {
+            border-color: var(--brown-light);
+            background: var(--warm-bg);
+        }
+        .form-input--key:focus { border-color: var(--accent); }
+        .form-submit {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        .form-submit:hover { background: #9E4A20; }
+        .form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.25rem;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .auth-footer a { color: var(--accent); text-decoration: none; }
+        .auth-footer a:hover { text-decoration: underline; }
+        .auth-error {
+            background: #fde8e8;
+            border: 1px solid #f5c0c0;
+            color: #c0392b;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .auth-success {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            color: #2e7d32;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <a href="index.html">Идея</a>
+        </div>
+        <div class="auth-title">Регистрация администратора</div>
+
+        <div class="auth-error" id="auth-error"></div>
+        <div class="auth-success" id="auth-success"></div>
+
+        <div class="form-section">Личные данные</div>
+
+        <div class="form-group">
+            <label class="form-label" for="full_name">ФИО</label>
+            <input type="text" id="full_name" class="form-input" placeholder="Иванов Иван Иванович" />
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="passport_series">Серия паспорта</label>
+                <input type="text" id="passport_series" class="form-input"
+                    placeholder="0000" maxlength="4" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="passport_number">Номер паспорта</label>
+                <input type="text" id="passport_number" class="form-input"
+                    placeholder="000000" maxlength="6" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="position">Должность</label>
+                <input type="text" id="position" class="form-input" placeholder="Библиотекарь" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="birth_date">Дата рождения</label>
+                <input type="date" id="birth_date" class="form-input" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="appointed_at">Дата назначения на должность</label>
+            <input type="date" id="appointed_at" class="form-input" />
+        </div>
+
+        <div class="form-section">Данные для входа</div>
+
+        <div class="form-group">
+            <label class="form-label" for="login">Логин</label>
+            <input type="text" id="login" class="form-input" placeholder="Придумайте логин" />
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="password">Пароль</label>
+                <input type="password" id="password" class="form-input" placeholder="Пароль" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password2">Повтор пароля</label>
+                <input type="password" id="password2" class="form-input" placeholder="Повтор" />
+            </div>
+        </div>
+
+        <div class="form-section">Ключ регистрации</div>
+
+        <div class="form-group">
+            <label class="form-label" for="register_key">Секретный ключ</label>
+            <input type="password" id="register_key" class="form-input form-input--key"
+                placeholder="Введите секретный ключ" />
+        </div>
+
+        <button class="form-submit" id="submit-btn" onclick="handleRegister()">
+            Зарегистрироваться
+        </button>
+
+        <div class="auth-footer">
+            Уже есть аккаунт? <a href="login.html">Войти</a>
+        </div>
+    </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    async function handleRegister() {
+        const full_name       = document.getElementById("full_name").value.trim();
+        const passport_series = document.getElementById("passport_series").value.trim();
+        const passport_number = document.getElementById("passport_number").value.trim();
+        const position        = document.getElementById("position").value.trim();
+        const birth_date      = document.getElementById("birth_date").value;
+        const appointed_at    = document.getElementById("appointed_at").value;
+        const login           = document.getElementById("login").value.trim();
+        const password        = document.getElementById("password").value;
+        const password2       = document.getElementById("password2").value;
+        const register_key    = document.getElementById("register_key").value.trim();
+
+        if (!full_name || !passport_series || !passport_number || !position ||
+            !birth_date || !appointed_at || !login || !password || !password2 || !register_key) {
+            showError("Заполните все поля");
+            return;
+        }
+        if (!/^\d{4}$/.test(passport_series)) {
+            showError("Серия паспорта — 4 цифры");
+            return;
+        }
+        if (!/^\d{6}$/.test(passport_number)) {
+            showError("Номер паспорта — 6 цифр");
+            return;
+        }
+        if (password !== password2) {
+            showError("Пароли не совпадают");
+            return;
+        }
+        if (password.length < 6) {
+            showError("Пароль должен быть не менее 6 символов");
+            return;
+        }
+
+        // Преобразуем даты из yyyy-mm-dd в дд.мм.гггг
+        const formatDate = (val) => {
+            const [y, m, d] = val.split("-");
+            return `${d}.${m}.${y}`;
+        };
+
+        const btn = document.getElementById("submit-btn");
+        btn.disabled = true;
+        btn.textContent = "Регистрация...";
+
+        try {
+            const data = await apiFetch("/auth/admin/register", {
+                method: "POST",
+                body: JSON.stringify({
+                    full_name,
+                    passport_series,
+                    passport_number,
+                    position,
+                    birth_date:   formatDate(birth_date),
+                    appointed_at: formatDate(appointed_at),
+                    login,
+                    password,
+                    register_key,
+                }),
+            });
+
+            if (!data.success) {
+                showError(data.message || "Ошибка регистрации");
+                return;
+            }
+
+            saveAuth(data.token, login);
+            localStorage.setItem("is_admin", "true");
+
+            showSuccess("Регистрация успешна! Перенаправляем...");
+            setTimeout(() => window.location.href = "admin_cabinet.html", 1200);
+
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Зарегистрироваться";
+        }
+    }
+
+    function showError(msg) {
+        document.getElementById("auth-success").style.display = "none";
+        const el = document.getElementById("auth-error");
+        el.textContent = msg;
+        el.style.display = "block";
+    }
+
+    function showSuccess(msg) {
+        document.getElementById("auth-error").style.display = "none";
+        const el = document.getElementById("auth-success");
+        el.textContent = msg;
+        el.style.display = "block";
+    }
+</script>
+</body>
+</html>
