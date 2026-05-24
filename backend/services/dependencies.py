@@ -3,7 +3,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from data.database import get_db
-from models import Administrator, User
+from models.models import Administrator, User
 from security import decode_token
 
 # HTTPBearer — говорит FastAPI что ожидаем токен в заголовке:

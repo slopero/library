@@ -109,10 +109,13 @@ function updateNavbar() {
 
     if (isLoggedIn()) {
         const username = localStorage.getItem(USER_KEY) || "Профиль";
+        const isAdmin  = localStorage.getItem("is_admin") === "true";
+        // Ссылка на кабинет зависит от роли
+        const cabinetUrl = isAdmin ? "admin_cabinet.html" : "user_cabinet.html";
         authContainer.innerHTML = `
-            <span class="navbar__link" style="color: var(--accent-light)">
+            <a href="${cabinetUrl}" class="navbar__link" style="color: var(--accent-light)">
                 👤 ${username}
-            </span>
+            </a>
             <button class="navbar__btn" onclick="logout()">Выйти</button>
         `;
     } else {
