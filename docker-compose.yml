@@ -1,0 +1,65 @@
+services:
+
+  # База данных 
+  db:
+    image: postgres:16
+    container_name: library_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_DB: library
+    ports:
+      - "5432:5432"
+    volumes:
+      # Именованный том — данные базы сохраняются между перезапусками.
+      # Без этого при остановке контейнера все данные удалятся.
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # pg_isready — утилита PostgreSQL которая проверяет
+      # готова ли база принимать подключения.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d library"]
+      # Проверять каждые 5 секунд
+      interval: 5s
+      # Считать проверку неудачной если нет ответа 5 секунд
+      timeout: 5s
+      # После 5 неудачных проверок подряд — контейнер считается нездоровым
+      retries: 5
+      # Подождать 10 секунд после старта контейнера перед первой проверкой —
+      # PostgreSQL не успевает запуститься мгновенно
+      start_period: 10s
+
+  # Бэкенд
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: library_backend
+    environment:
+      # Передаём строку подключения к базе.
+      # "db" — это название сервиса выше, Docker сам резолвит его в IP
+      DATABASE_URL: postgresql://postgres:123@db:5432/library
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        # Ждём не просто старта контейнера, а именно healthy —
+        # то есть пока healthcheck не скажет что база готова
+        condition: service_healthy
+    volumes:
+      # Монтируем код для удобства разработки —
+      # изменения в файлах сразу видны без пересборки образа
+      - ./backend:/app
+
+  # Фронтенд 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: library_frontend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
