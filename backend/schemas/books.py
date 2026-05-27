@@ -23,4 +23,5 @@ class BookListResponse(BaseModel):
     items: list[BookCard] 
     total: int              
     page: int               
-    pages: int              
+    pages: int          
+
