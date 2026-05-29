@@ -13,6 +13,7 @@ services:
     volumes:
       # Именованный том — данные базы сохраняются между перезапусками.
       # Без этого при остановке контейнера все данные удалятся.
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       # pg_isready — утилита PostgreSQL которая проверяет
