@@ -70,6 +70,7 @@ function pickColor(id) {
  */
 function renderBooks(books) {
     const grid = document.getElementById("books-grid");
+    const isAdmin = localStorage.getItem("is_admin") === "true";
 
     if (books.length === 0) {
         grid.innerHTML = `
@@ -102,10 +103,11 @@ function renderBooks(books) {
                 <div class="book-card__title">${escapeHtml(book.title)}</div>
                 <div class="book-card__author">${escapeHtml(book.authors)}, ${book.year}</div>
                 <div class="book-card__price">${formatPrice(book.price)} ₽</div>
+                ${isAdmin ? "" : `
                 <button
                     class="book-card__cart-btn"
                     onclick="addToCart(event, ${book.id})"
-                >+ В корзину</button>
+                >+ В корзину</button>`}
             </div>
         </div>`;
     }).join("");
@@ -213,6 +215,10 @@ async function addToCart(event, bookId) {
     // stopPropagation — чтобы клик по кнопке не открывал страницу книги
     event.stopPropagation();
 
+    if (localStorage.getItem("is_admin") === "true") {
+        return;
+    }
+
     if (!isLoggedIn()) {
         window.location.href = "login.html";
         return;
@@ -242,12 +248,17 @@ async function addToCart(event, bookId) {
 // ── Избранное ─────────────────────────────────
 
 // Список id книг в избранном храним локально для быстрой проверки
+function getFavoriteStorageKey() {
+    const username = localStorage.getItem("auth_user");
+    return username ? `favorites_${username}` : "favorites_guest";
+}
+
 function getFavoriteIds() {
-    return JSON.parse(localStorage.getItem("favorites") || "[]");
+    return JSON.parse(localStorage.getItem(getFavoriteStorageKey()) || "[]");
 }
 
 function setFavoriteIds(ids) {
-    localStorage.setItem("favorites", JSON.stringify(ids));
+    localStorage.setItem(getFavoriteStorageKey(), JSON.stringify(ids));
 }
 
 async function toggleFavorite(event, bookId) {
@@ -279,6 +290,20 @@ async function toggleFavorite(event, bookId) {
         }
     } catch (err) {
         alert(err.message);
+    }
+}
+
+async function syncFavorites() {
+    if (!isLoggedIn()) {
+        return;
+    }
+
+    try {
+        const data = await apiFetch("/favorites/");
+        const ids = (data.items || []).map(item => item.book.id);
+        setFavoriteIds(ids);
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -330,7 +355,8 @@ function declension(n, one, few, many) {
 
 // ── Запуск ────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     updateCartBadge(getCartCount());
+    await syncFavorites();
     loadBooks();
 });

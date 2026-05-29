@@ -3,126 +3,33 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Личный кабинет администратора — Идея</title>
+    <title>Личный кабинет — Идея</title>
     <link rel="stylesheet" href="css/style.css" />
     <style>
-        .cabinet-page {
-            max-width: 700px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
-        .cabinet-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 2.5rem;
-            box-shadow: 0 4px 24px rgba(61,43,31,0.08);
-        }
-        .cabinet-header {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .cabinet-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: var(--accent-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            flex-shrink: 0;
-        }
-        .cabinet-name {
-            font-family: var(--font-display);
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--brown-dark);
-            margin-bottom: 4px;
-        }
-        .cabinet-role {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-        .cabinet-fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-        .cabinet-field label {
-            display: block;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        .cabinet-field span {
-            font-size: 15px;
-            color: var(--brown-dark);
-        }
-        .cabinet-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: var(--font-body);
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-primary:hover { background: #9E4A20; }
-        .btn-outline {
-            background: none;
-            color: var(--brown-mid);
-            border: 1px solid var(--border);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: var(--font-body);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-        /* Плашка "Администратор" */
-        .admin-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--accent-light);
-            color: var(--accent);
-            font-size: 12px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(184,92,44,0.2);
-            margin-top: 4px;
-        }
+        .cabinet-page { max-width:860px; margin:2.5rem auto; padding:0 2rem; }
+        .cabinet-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:2.5rem; box-shadow:0 4px 24px rgba(61,43,31,0.08); margin-bottom:1.5rem; }
+        .cabinet-header { display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+        .cabinet-avatar { width:72px; height:72px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; }
+        .cabinet-name { font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--brown-dark); margin-bottom:4px; }
+        .cabinet-role { font-size:13px; color:var(--text-muted); font-style:italic; }
+        .admin-badge { display:inline-flex; align-items:center; gap:6px; background:var(--accent-light); color:var(--accent); font-size:12px; padding:3px 10px; border-radius:20px; border:1px solid rgba(184,92,44,0.2); margin-top:4px; }
+        .cabinet-fields { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem; }
+        .cabinet-field label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:4px; }
+        .cabinet-field span { font-size:15px; color:var(--brown-dark); }
+        .cabinet-actions { display:flex; gap:12px; flex-wrap:wrap; }
+        .btn-primary { background:var(--accent); color:#fff; border:none; padding:10px 24px; border-radius:8px; font-size:14px; font-family:var(--font-body); cursor:pointer; text-decoration:none; transition:background 0.2s; display:inline-flex; align-items:center; gap:8px; }
+        .btn-primary:hover { background:#9E4A20; }
+        .btn-outline { background:none; color:var(--brown-mid); border:1px solid var(--border); padding:10px 24px; border-radius:8px; font-size:14px; font-family:var(--font-body); cursor:pointer; transition:all 0.2s; }
+        .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
     </style>
 </head>
 <body>
-
 <nav class="navbar">
-    <a href="index.html" class="navbar__logo">
-        Идея <span>Онлайн-библиотека</span>
-    </a>
+    <a href="index.html" class="navbar__logo">Идея <span>Онлайн-библиотека</span></a>
     <div class="navbar__links">
         <a href="index.html" class="navbar__link">Главная</a>
+        <a href="cart.html" class="navbar__link">Корзина <span class="navbar__badge" id="cart-badge" style="display:none">0</span></a>
+        <a href="favorites.html" class="navbar__link">Избранное</a>
         <div id="navbar-auth"></div>
     </div>
 </nav>
@@ -136,64 +43,45 @@
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
 <script>
-    // Защита — только для авторизованных администраторов
     if (!isLoggedIn() || localStorage.getItem("is_admin") !== "true") {
         window.location.href = "login.html";
     }
 
-    function formatDate(val) {
-        if (!val) return "—";
-        const [y, m, d] = val.split("-");
-        return `${d}.${m}.${y}`;
-    }
-
-    function escapeHtml(str) {
-        return String(str || "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;");
-    }
+    function escapeHtml(str) { return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    function formatDate(val) { if (!val) return "—"; const [y,m,d]=val.split("-"); return `${d}.${m}.${y}`; }
 
     async function loadCabinet() {
         try {
-            const data = await apiFetch("/auth/admin/me");
-
+            const data = await apiFetch("/auth/me");
             document.getElementById("cabinet-card").innerHTML = `
                 <div class="cabinet-header">
                     <div class="cabinet-avatar">👤</div>
                     <div>
                         <div class="cabinet-name">${escapeHtml(data.full_name)}</div>
-                        <div class="cabinet-role">${escapeHtml(data.position)}</div>
+                        <div class="cabinet-role">${escapeHtml(data.position || "Администратор")}</div>
                         <div class="admin-badge">⚙️ Администратор</div>
                     </div>
                 </div>
                 <div class="cabinet-fields">
-                    <div class="cabinet-field">
-                        <label>Должность</label>
-                        <span>${escapeHtml(data.position)}</span>
-                    </div>
-                    <div class="cabinet-field">
-                        <label>Дата рождения</label>
-                        <span>${formatDate(data.birth_date)}</span>
-                    </div>
-                    <div class="cabinet-field">
-                        <label>Дата назначения</label>
-                        <span>${formatDate(data.appointed_at)}</span>
-                    </div>
+                    <div class="cabinet-field"><label>Email</label><span>${escapeHtml(data.email)}</span></div>
+                    <div class="cabinet-field"><label>Дата рождения</label><span>${formatDate(data.birth_date)}</span></div>
+                    <div class="cabinet-field"><label>Должность</label><span>${escapeHtml(data.position || "—")}</span></div>
+                    <div class="cabinet-field"><label>Дата назначения</label><span>${formatDate(data.appointed_at)}</span></div>
                 </div>
                 <div class="cabinet-actions">
-                    <a href="admin.html" class="btn-primary">📚 Панель управления книгами</a>
+                    <a href="admin.html" class="btn-primary">📚 Панель управления</a>
+                    <a href="favorites.html" class="btn-primary">❤️ Избранное</a>
                     <button class="btn-outline" onclick="logout()">Выйти</button>
-                </div>
-            `;
+                </div>`;
         } catch (err) {
-            document.getElementById("cabinet-card").innerHTML =
-                `<div class="error-message">⚠️ ${err.message}</div>`;
+            document.getElementById("cabinet-card").innerHTML = `<div class="error-message">⚠️ ${err.message}</div>`;
         }
     }
 
-    document.addEventListener("DOMContentLoaded", loadCabinet);
+    document.addEventListener("DOMContentLoaded", () => {
+        updateCartBadge(getCartCount());
+        loadCabinet();
+    });
 </script>
 </body>
 </html>

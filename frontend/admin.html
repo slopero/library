@@ -220,6 +220,10 @@
             <label class="form-label">Описание <span style="color:var(--text-muted)">(необязательно)</span></label>
             <textarea id="b-description" class="form-textarea" placeholder="Краткое описание книги..."></textarea>
         </div>
+        <div class="form-group">
+            <label class="form-label">Текст книги (PDF)</label>
+            <input type="file" id="b-text" class="form-input" accept="application/pdf" />
+        </div>
 
         <div class="modal-actions">
             <button class="btn-primary" id="modal-submit" onclick="handleAddBook()">Добавить</button>
@@ -301,7 +305,7 @@
         document.getElementById("modal-overlay").classList.remove("open");
         document.getElementById("modal-error").style.display = "none";
         // Очищаем поля
-        ["b-title","b-authors","b-genre","b-language","b-year","b-price","b-description"]
+        ["b-title","b-authors","b-genre","b-language","b-year","b-price","b-description","b-text"]
             .forEach(id => document.getElementById(id).value = "");
     }
 
@@ -317,9 +321,15 @@
         const year        = document.getElementById("b-year").value;
         const price       = document.getElementById("b-price").value;
         const description = document.getElementById("b-description").value.trim();
+        const textFile    = document.getElementById("b-text").files[0] || null;
 
-        if (!title || !authors || !genre || !language || !year || !price) {
+        if (!title || !authors || !genre || !language || !year || !price || !textFile) {
             showModalError("Заполните все обязательные поля");
+            return;
+        }
+
+        if (textFile.type !== "application/pdf") {
+            showModalError("Текст книги должен быть PDF файлом");
             return;
         }
 
@@ -328,15 +338,34 @@
         btn.textContent = "Добавляем...";
 
         try {
-            await apiFetch("/books/", {
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("authors", authors);
+            formData.append("genre", genre);
+            formData.append("language", language);
+            formData.append("year", String(parseInt(year)));
+            formData.append("price", String(parseFloat(price)));
+            if (description) {
+                formData.append("description", description);
+            }
+            formData.append("text_file", textFile);
+
+            const token = getToken();
+            const response = await fetch(`${API_URL}/books/`, {
                 method: "POST",
-                body: JSON.stringify({
-                    title, authors, genre, language,
-                    year: parseInt(year),
-                    price: parseFloat(price),
-                    description: description || null,
-                }),
+                headers: token ? { "Authorization": `Bearer ${token}` } : {},
+                body: formData,
             });
+
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ detail: "Неизвестная ошибка" }));
+                throw new Error(error.detail || "Ошибка сервера");
+            }
 
             closeModal();
             loadBooks();

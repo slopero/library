@@ -188,7 +188,7 @@
         btn.textContent = "Регистрация...";
 
         try {
-            const data = await apiFetch("/auth/user/register", {
+            const data = await apiFetch("/auth/register", {
                 method: "POST",
                 body: JSON.stringify({
                     full_name,

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Избранное — Идея</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .hero {
+            background: var(--warm-bg);
+            padding: 2.5rem 2rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero__title {
+            font-family: var(--font-display);
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--brown-dark);
+            margin-bottom: 0.4rem;
+        }
+        .hero__sub {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .hero__search {
+            max-width: 580px;
+            margin: 0 auto;
+            display: flex;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 16px rgba(61,43,31,0.08);
+        }
+        .hero__search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-family: var(--font-body);
+            color: var(--brown-dark);
+            background: transparent;
+        }
+        .hero__search-input::placeholder { color: var(--text-muted); }
+        .hero__search-btn {
+            background: var(--accent);
+            border: none;
+            padding: 0 22px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .hero__search-btn:hover { background: #9E4A20; }
+
+        .toolbar {
+            max-width: 1100px;
+            margin: 1.5rem auto 0;
+            padding: 0 2rem;
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .toolbar__group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .toolbar__label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .toolbar__input, .toolbar__select {
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--brown-dark);
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            outline: none;
+            min-width: 120px;
+        }
+        .toolbar__input:focus, .toolbar__select:focus {
+            border-color: var(--accent);
+        }
+        .toolbar__year-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .toolbar__year-row input {
+            width: 80px;
+        }
+        .toolbar__apply-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: background 0.2s;
+            align-self: flex-end;
+        }
+        .toolbar__apply-btn:hover { background: #9E4A20; }
+        .toolbar__reset-btn {
+            background: none;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            align-self: flex-end;
+        }
+        .toolbar__reset-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .results-bar {
+            max-width: 1100px;
+            margin: 1rem auto 0;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .results-bar__info {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .results-bar__sort {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .results-bar__sort select {
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--brown-mid);
+            font-size: 13px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            cursor: pointer;
+            outline: none;
+        }
+        .results-bar__sort select:focus { border-color: var(--accent); }
+
+        .content {
+            padding: 1.25rem 2rem 0;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="index.html" class="navbar__logo">Идея <span>Онлайн-библиотека</span></a>
+    <div class="navbar__links">
+        <a href="index.html" class="navbar__link">Главная</a>
+        <a href="cart.html" class="navbar__link">
+            Корзина <span class="navbar__badge" id="cart-badge" style="display:none">0</span>
+        </a>
+        <a href="favorites.html" class="navbar__link navbar__link--active">Избранное</a>
+        <div id="navbar-auth"></div>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1 class="hero__title">Избранное</h1>
+    <p class="hero__sub">Ваши любимые книги всегда под рукой</p>
+    <div class="hero__search">
+        <input
+            type="text"
+            id="search-input"
+            class="hero__search-input"
+            placeholder="Название или автор..."
+            oninput="onSearchInput(this.value)"
+        />
+        <button class="hero__search-btn" onclick="onSearchInput(document.getElementById('search-input').value)">
+            🔍
+        </button>
+    </div>
+</section>
+
+<div class="toolbar">
+    <div class="toolbar__group">
+        <label class="toolbar__label" for="filter-genre">Жанр</label>
+        <input
+            type="text"
+            id="filter-genre"
+            class="toolbar__input"
+            placeholder="Например: роман"
+        />
+    </div>
+    <div class="toolbar__group">
+        <label class="toolbar__label" for="filter-language">Язык</label>
+        <select id="filter-language" class="toolbar__select">
+            <option value="">Все языки</option>
+            <option value="Русский">Русский</option>
+            <option value="Английский">Английский</option>
+            <option value="Французский">Французский</option>
+            <option value="Немецкий">Немецкий</option>
+        </select>
+    </div>
+    <div class="toolbar__group">
+        <label class="toolbar__label">Год издания</label>
+        <div class="toolbar__year-row">
+            <input
+                type="number"
+                id="filter-year-from"
+                class="toolbar__input"
+                placeholder="От"
+                min="0"
+                max="2100"
+            />
+            <span style="color: var(--text-muted)">—</span>
+            <input
+                type="number"
+                id="filter-year-to"
+                class="toolbar__input"
+                placeholder="До"
+                min="0"
+                max="2100"
+            />
+        </div>
+    </div>
+    <button class="toolbar__apply-btn" onclick="onFilterChange()">Применить</button>
+    <button class="toolbar__reset-btn" onclick="resetFilters()">Сбросить</button>
+</div>
+
+<div class="results-bar">
+    <span class="results-bar__info" id="results-info"></span>
+    <div class="results-bar__sort">
+        Сортировка:
+        <select onchange="onSortChange(this.value)">
+            <option value="title">По алфавиту</option>
+            <option value="author">По автору</option>
+            <option value="year">По году</option>
+        </select>
+    </div>
+</div>
+
+<div class="content">
+    <div id="fav-content">
+        <div class="spinner"><div class="spinner__circle"></div></div>
+    </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    if (!isLoggedIn()) window.location.href = "login.html";
+
+    const COLORS = ["c1","c2","c3","c4","c5","c6","c7","c8"];
+    const state = {
+        search: "",
+        genre: "",
+        language: "",
+        year_from: "",
+        year_to: "",
+        sort: "title",
+    };
+    let allItems = [];
+
+    function pickColor(id) { return COLORS[id % COLORS.length]; }
+    function escapeHtml(str) {
+        return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+    function formatPrice(p) { return Number(p).toLocaleString("ru-RU"); }
+
+    function getFavoriteStorageKey() {
+        const username = localStorage.getItem("auth_user");
+        return username ? `favorites_${username}` : "favorites_guest";
+    }
+
+    function setFavoriteIds(ids) {
+        localStorage.setItem(getFavoriteStorageKey(), JSON.stringify(ids));
+    }
+
+    async function loadFavorites() {
+        try {
+            const data = await apiFetch("/favorites/");
+            allItems = data.items || [];
+            renderFavorites();
+        } catch (err) {
+            document.getElementById("fav-content").innerHTML =
+                `<div class="error-message">⚠️ ${err.message}</div>`;
+        }
+    }
+
+    function applyFilters(items) {
+        let result = items;
+        if (state.search) {
+            const needle = state.search.toLowerCase();
+            result = result.filter(item => {
+                const title = (item.book.title || "").toLowerCase();
+                const authors = (item.book.authors || "").toLowerCase();
+                return title.includes(needle) || authors.includes(needle);
+            });
+        }
+
+        if (state.genre) {
+            const needle = state.genre.toLowerCase();
+            result = result.filter(item => {
+                const genre = (item.book.genre || "").toLowerCase();
+                return !item.book.genre || genre.includes(needle);
+            });
+        }
+
+        if (state.language) {
+            result = result.filter(item => {
+                const language = item.book.language || "";
+                return !item.book.language || language === state.language;
+            });
+        }
+
+        if (state.year_from || state.year_to) {
+            const from = state.year_from ? Number(state.year_from) : null;
+            const to = state.year_to ? Number(state.year_to) : null;
+            result = result.filter(item => {
+                const year = Number(item.book.year);
+                if (!item.book.year || Number.isNaN(year)) {
+                    return true;
+                }
+                if (from !== null && year < from) return false;
+                if (to !== null && year > to) return false;
+                return true;
+            });
+        }
+
+        const sort = state.sort;
+        result = [...result].sort((a, b) => {
+            if (sort === "author") return a.book.authors.localeCompare(b.book.authors, "ru");
+            if (sort === "year") return (Number(a.book.year) || 0) - (Number(b.book.year) || 0);
+            return a.book.title.localeCompare(b.book.title, "ru");
+        });
+
+        return result;
+    }
+
+    function renderFavorites() {
+        const filtered = applyFilters(allItems);
+        document.getElementById("results-info").textContent =
+            `Найдено: ${filtered.length}`;
+
+        if (!filtered.length) {
+            document.getElementById("fav-content").innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state__icon">❤️</div>
+                    <div class="empty-state__text">Ничего не найдено</div>
+                    <div class="empty-state__sub">Попробуйте изменить параметры поиска</div>
+                </div>`;
+            return;
+        }
+
+        // Синхронизируем localStorage с данными сервера
+        const ids = allItems.map(i => i.book.id);
+        setFavoriteIds(ids);
+
+        const isAdmin = localStorage.getItem("is_admin") === "true";
+        const cards = filtered.map(item => `
+            <div class="book-card" id="fav-${item.id}">
+                <div class="book-card__cover book-card__cover--${pickColor(item.book.id)}"
+                     onclick="window.location.href='book.html?id=${item.book.id}'" style="cursor:pointer">
+                    <span style="opacity:0.2;font-size:48px">📖</span>
+                    <button class="book-card__fav-btn book-card__fav-btn--active"
+                        onclick="removeFav(event, ${item.id}, ${item.book.id})">♥</button>
+                    <div class="book-card__cover-title">${escapeHtml(item.book.title)}</div>
+                </div>
+                <div class="book-card__body">
+                    <div class="book-card__title">${escapeHtml(item.book.title)}</div>
+                    <div class="book-card__author">${escapeHtml(item.book.authors)}</div>
+                    <div class="book-card__price">${formatPrice(item.book.price)} ₽</div>
+                    ${isAdmin ? "" : `
+                    <button class="book-card__cart-btn" onclick="addToCart(event, ${item.book.id})">
+                        + В корзину
+                    </button>`}
+                </div>
+            </div>`).join("");
+
+        document.getElementById("fav-content").innerHTML =
+            `<div class="books-grid">${cards}</div>`;
+    }
+
+    async function removeFav(event, favId, bookId) {
+        event.stopPropagation();
+        try {
+            await apiFetch(`/favorites/${bookId}`, { method: "DELETE" });
+            document.getElementById(`fav-${favId}`)?.remove();
+            // Обновляем localStorage
+            const ids = (allItems || []).map(i => i.book.id).filter(id => id !== bookId);
+            setFavoriteIds(ids);
+            allItems = allItems.filter(i => i.book.id !== bookId);
+            // Если список пустой — показываем заглушку
+            if (!document.querySelector(".book-card")) loadFavorites();
+        } catch (err) { alert(err.message); }
+    }
+
+    async function addToCart(event, bookId) {
+        event.stopPropagation();
+        if (localStorage.getItem("is_admin") === "true") { return; }
+        try {
+            await apiFetch("/cart/", {
+                method: "POST",
+                body: JSON.stringify({ book_id: bookId }),
+            });
+            setCartCount(getCartCount() + 1);
+            const btn = event.target;
+            btn.textContent = "✓ Добавлено";
+            btn.classList.add("book-card__cart-btn--added");
+            btn.disabled = true;
+        } catch (err) { alert(err.message); }
+    }
+
+    function onSearchInput(value) {
+        state.search = value.trim();
+        renderFavorites();
+    }
+
+    function onFilterChange() {
+        state.genre = document.getElementById("filter-genre").value.trim();
+        state.language = document.getElementById("filter-language").value;
+        state.year_from = document.getElementById("filter-year-from").value;
+        state.year_to = document.getElementById("filter-year-to").value;
+        renderFavorites();
+    }
+
+    function onSortChange(value) {
+        state.sort = value;
+        renderFavorites();
+    }
+
+    function resetFilters() {
+        state.search = "";
+        state.genre = "";
+        state.language = "";
+        state.year_from = "";
+        state.year_to = "";
+        state.sort = "title";
+        document.getElementById("search-input").value = "";
+        document.getElementById("filter-genre").value = "";
+        document.getElementById("filter-language").value = "";
+        document.getElementById("filter-year-from").value = "";
+        document.getElementById("filter-year-to").value = "";
+        const sortSelect = document.querySelector(".results-bar__sort select");
+        if (sortSelect) sortSelect.value = "title";
+        renderFavorites();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        updateCartBadge(getCartCount());
+        loadFavorites();
+    });
+</script>
+</body>
+</html>

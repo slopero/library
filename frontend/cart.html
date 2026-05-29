@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Корзина — Идея</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .page { max-width: 760px; margin: 2.5rem auto; padding: 0 2rem; }
+        .page-title {
+            font-family: var(--font-display); font-size: 26px; font-weight: 600;
+            color: var(--brown-dark); margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+        }
+        .cart-item {
+            display: flex; align-items: center; gap: 1rem;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+        }
+        .cart-item__cover {
+            width: 52px; height: 72px; border-radius: 6px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+        .cart-item__info { flex: 1; }
+        .cart-item__title {
+            font-family: var(--font-display); font-size: 15px; font-weight: 600;
+            color: var(--brown-dark); margin-bottom: 3px;
+        }
+        .cart-item__author { font-size: 12px; color: var(--text-muted); font-style: italic; }
+        .cart-item__price { font-size: 16px; font-weight: 600; color: var(--accent); }
+        .btn-remove {
+            background: none; border: 1px solid #f5c0c0; color: #c0392b;
+            padding: 5px 12px; border-radius: 6px; font-size: 12px;
+            cursor: pointer; font-family: var(--font-body); transition: all 0.2s;
+        }
+        .btn-remove:hover { background: #fde8e8; }
+        .cart-footer {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1.25rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .cart-total { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--brown-dark); }
+        .cart-total span { color: var(--accent); }
+        .btn-checkout {
+            background: var(--accent); color: #fff; border: none;
+            padding: 11px 28px; border-radius: 8px; font-size: 15px;
+            font-family: var(--font-body); cursor: pointer; transition: background 0.2s;
+        }
+        .btn-checkout:hover { background: #9E4A20; }
+        .btn-checkout:disabled { opacity: 0.6; cursor: not-allowed; }
+        .success-msg {
+            background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32;
+            padding: 12px 16px; border-radius: 8px; font-size: 14px;
+            margin-bottom: 1rem; display: none;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="index.html" class="navbar__logo">Идея <span>Онлайн-библиотека</span></a>
+    <div class="navbar__links">
+        <a href="index.html" class="navbar__link">Главная</a>
+        <a href="cart.html" class="navbar__link navbar__link--active">
+            Корзина <span class="navbar__badge" id="cart-badge" style="display:none">0</span>
+        </a>
+        <a href="favorites.html" class="navbar__link">Избранное</a>
+        <div id="navbar-auth"></div>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="page-title">Корзина</div>
+    <div class="success-msg" id="success-msg"></div>
+    <div id="cart-content">
+        <div class="spinner"><div class="spinner__circle"></div></div>
+    </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    if (!isLoggedIn()) window.location.href = "login.html";
+
+    const COLORS = ["c1","c2","c3","c4","c5","c6","c7","c8"];
+    function pickColor(id) { return COLORS[id % COLORS.length]; }
+
+    function escapeHtml(str) {
+        return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+    function formatPrice(p) { return Number(p).toLocaleString("ru-RU"); }
+
+    async function loadCart() {
+        try {
+            const data = await apiFetch("/cart/");
+            renderCart(data);
+        } catch (err) {
+            document.getElementById("cart-content").innerHTML =
+                `<div class="error-message">⚠️ ${err.message}</div>`;
+        }
+    }
+
+    function renderCart(data) {
+        if (!data.items.length) {
+            document.getElementById("cart-content").innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state__icon">🛒</div>
+                    <div class="empty-state__text">Корзина пуста</div>
+                    <div class="empty-state__sub">Добавьте книги на <a href="index.html" style="color:var(--accent)">главной странице</a></div>
+                </div>`;
+            setCartCount(0);
+            return;
+        }
+
+        const rows = data.items.map(item => `
+            <div class="cart-item" id="item-${item.id}">
+                <div class="cart-item__cover book-card__cover--${pickColor(item.book.id)}">📖</div>
+                <div class="cart-item__info">
+                    <div class="cart-item__title">
+                        <a href="book.html?id=${item.book.id}" style="text-decoration:none;color:inherit">
+                            ${escapeHtml(item.book.title)}
+                        </a>
+                    </div>
+                    <div class="cart-item__author">${escapeHtml(item.book.authors)}</div>
+                </div>
+                <div class="cart-item__price">${formatPrice(item.book.price)} ₽</div>
+                <button class="btn-remove" onclick="removeItem(${item.id})">Удалить</button>
+            </div>`).join("");
+
+        document.getElementById("cart-content").innerHTML = `
+            ${rows}
+            <div class="cart-footer">
+                <div class="cart-total">Итого: <span>${formatPrice(data.total)} ₽</span></div>
+                <button class="btn-checkout" onclick="handleCheckout()">Оформить покупку</button>
+            </div>`;
+
+        setCartCount(data.items.length);
+    }
+
+    async function removeItem(itemId) {
+        try {
+            await apiFetch(`/cart/${itemId}`, { method: "DELETE" });
+            document.getElementById(`item-${itemId}`)?.remove();
+            setCartCount(Math.max(0, getCartCount() - 1));
+            // Перезагружаем чтобы пересчитать итог
+            loadCart();
+        } catch (err) { alert(err.message); }
+    }
+
+    async function handleCheckout() {
+        const btn = document.querySelector(".btn-checkout");
+        btn.disabled = true;
+        btn.textContent = "Оформляем...";
+        try {
+            const result = await apiFetch("/cart/checkout", { method: "POST" });
+            const msg = document.getElementById("success-msg");
+            msg.textContent = `✓ ${result.message}. Сумма: ${formatPrice(result.total)} ₽`;
+            msg.style.display = "block";
+            setCartCount(0);
+            setTimeout(loadCart, 1500);
+        } catch (err) {
+            alert(err.message);
+            btn.disabled = false;
+            btn.textContent = "Оформить покупку";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        updateCartBadge(getCartCount());
+        loadCart();
+    });
+</script>
+</body>
+</html>

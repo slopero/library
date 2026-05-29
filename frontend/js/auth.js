@@ -125,8 +125,20 @@ function updateNavbar() {
     }
 }
 
+function updateCartVisibility() {
+    const isAdmin = localStorage.getItem("is_admin") === "true";
+    const cartLinks = document.querySelectorAll('a[href="cart.html"]');
+
+    cartLinks.forEach(link => {
+        link.style.display = isAdmin ? "none" : "";
+    });
+}
+
 // Обновляем шапку сразу при загрузке скрипта
-document.addEventListener("DOMContentLoaded", updateNavbar);
+document.addEventListener("DOMContentLoaded", () => {
+    updateNavbar();
+    updateCartVisibility();
+});
 
 
 // ── Бейдж корзины ─────────────────────────────
